@@ -1,0 +1,45 @@
+This is a TCP protocol based client-server program as described below.
+
+Requirements:
+1) Client program sends an identification number to the server
+2) The server looks up the identification number in a table, 
+   and the server returns a string associated with the identification number back to the client. 
+3) The client should print the identification number and the string that is received from the server.
+4) Both the client and server should verify that the identification number contains exactly 6 digits 
+   and the client should read the number from the commandline.
+5) The client should not initiate a request to the server if the identification number is invalid.
+   (e.g., the wrong number of digits or characters other than 0-9).
+6) The server should return a message indicating that the number is invalid if it is not found in the server’s table.
+   For simplicity just generate a table with 5 identification numbers and return strings pairs for the server to use.
+   
+
+Implementation history of mp1client:
+1) Base code downloaded from :
+https://github.com/beejjorgensen/bgnet/tree/master/examples/client.c
+2) Modified the code to accept identification (ID) number as a command line argument.
+3) Added code to verify if the ID has only digits and is exactly of length 6.
+4) Added code to send the “identification number” string to the server.
+5) Added code to receive and validate the “message length” string sent by the server.
+6) Based on the message length string, allocated the memory to receive the actual message from
+   server.
+7) Added code to receive and validate the “message” string sent by the server.
+8) Added code to print the ID and message from server.
+9) Added code to use recv() call in non blocking mode to read any additional data in the socket
+   buffer.
+10) Modified the code to achieve retry connection when server sends less data than as indicated in
+   “message length” string.
+
+System calls at Client:
+send() ID---> recv() Msg Length --->Allocate Memory--->recv() Msg ---> printf() Msg
+
+Implementation history of mp1server:
+1) Base code downloaded from
+   https://github.com/beejjorgensen/bgnet/tree/master/examples/server.c
+2) Created a lookup table with ID numbers and their corresponding message strings.
+3) Added code to receive and validate the “identification number” string sent by the client.
+4) Based on the “identification number” string, generated the necessary “message length” string
+   and “message” string to be sent to the client.
+5) Added code to use send () call, which can be used to send data of any size in bytes.
+
+System calls at Server:
+recv() ID---> send() Msg Length --->Sleep() --->send() Msg
